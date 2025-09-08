@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Search, BookOpen, MessageCircle, User, LogOut } from "lucide-react";
+import { Search, BookOpen, MessageCircle, User, LogOut, Moon, Sun } from "lucide-react";
 import { useUser, useClerk } from "@clerk/clerk-react";
+import { useTheme } from "@/components/theme-provider";
 import { useState } from "react";
 
 interface NavbarProps {
@@ -10,6 +11,7 @@ interface NavbarProps {
 const Navbar = ({ onSearch }: NavbarProps) => {
   const { user } = useUser();
   const { signOut } = useClerk();
+  const { theme, setTheme } = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (e: React.FormEvent) => {
@@ -51,6 +53,13 @@ const Navbar = ({ onSearch }: NavbarProps) => {
         <div className="flex items-center space-x-4">
           {user ? (
             <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+              >
+                {theme === "light" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+              </Button>
               <Button variant="ghost" size="icon">
                 <MessageCircle className="h-5 w-5" />
               </Button>

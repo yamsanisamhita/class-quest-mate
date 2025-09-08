@@ -3,12 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Users, BookOpen, Target, Plus, Upload, Edit, Trash2, BarChart3 } from "lucide-react";
 import { useState } from "react";
+import mathImage from "@/assets/material-math.jpg";
+import physicsImage from "@/assets/material-physics.jpg";
+import chemistryImage from "@/assets/material-chemistry.jpg";
 
 const TeacherDashboard = () => {
   const [materials, setMaterials] = useState([
-    { id: 1, title: "Advanced Calculus", type: "PDF", uploadDate: "2024-01-10", downloads: 24 },
-    { id: 2, title: "Physics Lab Manual", type: "PDF", uploadDate: "2024-01-12", downloads: 18 },
-    { id: 3, title: "Chemistry Lecture Series", type: "Video", uploadDate: "2024-01-14", downloads: 31 },
+    { id: 1, title: "Advanced Calculus", type: "PDF", uploadDate: "2024-01-10", downloads: 24, image: mathImage },
+    { id: 2, title: "Physics Lab Manual", type: "PDF", uploadDate: "2024-01-12", downloads: 18, image: physicsImage },
+    { id: 3, title: "Chemistry Lecture Series", type: "Video", uploadDate: "2024-01-14", downloads: 31, image: chemistryImage },
   ]);
 
   const studentProgress = [
@@ -152,12 +155,19 @@ const TeacherDashboard = () => {
           <CardContent>
             <div className="space-y-4">
               {materials.map((material) => (
-                <div key={material.id} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex-1">
-                    <h4 className="font-medium">{material.title}</h4>
-                    <p className="text-sm text-muted-foreground">
-                      {material.type} • Uploaded {material.uploadDate} • {material.downloads} downloads
-                    </p>
+                <div key={material.id} className="flex items-center justify-between p-4 border rounded-lg hover:shadow-md transition-all">
+                  <div className="flex items-center gap-4">
+                    <img 
+                      src={material.image} 
+                      alt={material.title}
+                      className="w-16 h-16 object-cover rounded-lg"
+                    />
+                    <div className="flex-1">
+                      <h4 className="font-medium">{material.title}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {material.type} • Uploaded {material.uploadDate} • {material.downloads} downloads
+                      </p>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button size="sm" variant="ghost">

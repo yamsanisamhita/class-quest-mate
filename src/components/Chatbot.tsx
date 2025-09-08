@@ -42,9 +42,31 @@ const Chatbot = ({ isOpen, onClose }: ChatbotProps) => {
     setInputText("");
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const botResponse = generateBotResponse(userMessage.text);
+    try {
+      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCtoSspZMh2YBENUM9JE1_n9iPzybJL2pM', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `You are an AI learning assistant for students. Please provide a helpful, educational response to: ${userMessage.text}`
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 1024,
+          }
+        }),
+      });
+
+      const data = await response.json();
+      const botResponse = data.candidates?.[0]?.content?.parts?.[0]?.text || 
+        "I'm sorry, I couldn't process your question right now. Please try again.";
+
       const botMessage: Message = {
         id: messages.length + 2,
         text: botResponse,
@@ -52,8 +74,17 @@ const Chatbot = ({ isOpen, onClose }: ChatbotProps) => {
         timestamp: new Date(),
       };
       setMessages(prev => [...prev, botMessage]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: messages.length + 2,
+        text: "I'm experiencing some technical difficulties. Please try again later.",
+        isBot: true,
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const generateBotResponse = (userInput: string): string => {

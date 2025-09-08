@@ -2,8 +2,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Clock, Trophy, Target, PlayCircle, FileText, Video } from "lucide-react";
+import { BookOpen, Clock, Trophy, Target, PlayCircle, FileText, Video, Download } from "lucide-react";
 import { useState } from "react";
+import mathImage from "@/assets/material-math.jpg";
+import physicsImage from "@/assets/material-physics.jpg";
+import chemistryImage from "@/assets/material-chemistry.jpg";
+import programmingImage from "@/assets/material-programming.jpg";
 
 const StudentDashboard = () => {
   const [studentProgress] = useState({
@@ -21,10 +25,10 @@ const StudentDashboard = () => {
   ];
 
   const learningMaterials = [
-    { id: 1, title: "Advanced Calculus", type: "pdf", uploadedBy: "Dr. Smith", date: "2024-01-10" },
-    { id: 2, title: "Physics Lab Manual", type: "pdf", uploadedBy: "Prof. Johnson", date: "2024-01-12" },
-    { id: 3, title: "Chemistry Lecture Series", type: "video", uploadedBy: "Dr. Brown", date: "2024-01-14" },
-    { id: 4, title: "Mathematics Problem Set", type: "text", uploadedBy: "Prof. Davis", date: "2024-01-15" },
+    { id: 1, title: "Advanced Calculus", type: "pdf", uploadedBy: "Dr. Smith", date: "2024-01-10", image: mathImage, downloadUrl: "/materials/calculus.pdf" },
+    { id: 2, title: "Physics Lab Manual", type: "pdf", uploadedBy: "Prof. Johnson", date: "2024-01-12", image: physicsImage, downloadUrl: "/materials/physics-lab.pdf" },
+    { id: 3, title: "Chemistry Lecture Series", type: "video", uploadedBy: "Dr. Brown", date: "2024-01-14", image: chemistryImage, downloadUrl: "/materials/chemistry-video.mp4" },
+    { id: 4, title: "Mathematics Problem Set", type: "text", uploadedBy: "Prof. Davis", date: "2024-01-15", image: programmingImage, downloadUrl: "/materials/math-problems.pdf" },
   ];
 
   const getProgressColor = (score: number) => {
@@ -42,6 +46,16 @@ const StudentDashboard = () => {
       default:
         return <BookOpen className="h-4 w-4" />;
     }
+  };
+
+  const handleDownload = (material: any) => {
+    // Create a temporary anchor element for download
+    const link = document.createElement('a');
+    link.href = material.downloadUrl;
+    link.download = material.title;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -160,10 +174,17 @@ const StudentDashboard = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {learningMaterials.map((material) => (
-              <div key={material.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-muted rounded-lg">
-                    {getTypeIcon(material.type)}
+              <div key={material.id} className="flex items-center justify-between p-4 border rounded-lg hover:shadow-md transition-all">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <img 
+                      src={material.image} 
+                      alt={material.title}
+                      className="w-16 h-16 object-cover rounded-lg"
+                    />
+                    <div className="absolute -top-1 -right-1 p-1 bg-primary rounded-full">
+                      {getTypeIcon(material.type)}
+                    </div>
                   </div>
                   <div>
                     <h4 className="font-medium">{material.title}</h4>
@@ -172,9 +193,22 @@ const StudentDashboard = () => {
                     </p>
                   </div>
                 </div>
-                <Button size="sm" variant="outline">
-                  {material.type === "video" ? <PlayCircle className="h-4 w-4 mr-1" /> : null}
-                  {material.type === "video" ? "Watch" : "Download"}
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => handleDownload(material)}
+                >
+                  {material.type === "video" ? (
+                    <>
+                      <PlayCircle className="h-4 w-4 mr-1" />
+                      Watch
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-4 w-4 mr-1" />
+                      Download
+                    </>
+                  )}
                 </Button>
               </div>
             ))}
